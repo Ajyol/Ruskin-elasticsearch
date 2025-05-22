@@ -3,17 +3,14 @@ import logging
 from lxml import etree
 from elasticsearch import Elasticsearch
 
-# Enable detailed logs
 logging.basicConfig(level=logging.INFO)
 
-# Fix: Specify compatibility with Elasticsearch 8.x
 es = Elasticsearch(
     ["http://localhost:9200"],
     headers={"Accept": "application/vnd.elasticsearch+json; compatible-with=8"}
 )
 
 INDEX_NAME = "ruskin_works"
-
 
 def init_index():
     try:
@@ -22,7 +19,7 @@ def init_index():
             print(f"✅ Created index: {INDEX_NAME}")
         else:
             print(f"ℹ️ Index already exists: {INDEX_NAME}")
-    except Exception as e:  # Simplified exception handling
+    except Exception as e:
         print(f"❌ Failed to initialize index: {e}")
 
 
@@ -72,16 +69,14 @@ def index_all(folder):
 
 if __name__ == "__main__":
     try:
-        # Test connection
         info = es.info()
         print("✅ Connected to Elasticsearch")
         print(f"Cluster: {info['cluster_name']}, Version: {info['version']['number']}")
 
         init_index()
 
-        # Get the script's directory and look for data folder
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.dirname(script_dir)  # Go up one level from indexer/
+        project_root = os.path.dirname(script_dir)
         data_path = os.path.join(project_root, "data")
 
         print(f"Looking for data folder at: {data_path}")
@@ -89,7 +84,6 @@ if __name__ == "__main__":
         if os.path.exists(data_path):
             index_all(data_path)
         else:
-            # Try current directory
             if os.path.exists("data"):
                 index_all("data")
             else:
